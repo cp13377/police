@@ -5,6 +5,12 @@ if not Config.Language then Config.Language = 'es' end
 if Config.Language ~= 'es' then return end
 
 Strings = {
+
+    jail_countdown_header = 'ESTÁS EN LA CÁRCEL',
+    jail_countdown_sentence = 'Quedan %s meses',
+    jail_time_up = 'Tiempo de cárcel cumplido',
+    jail_time_up_desc = 'Has cumplido tu tiempo en la cárcel.',
+
     no_society_account = 'No se encontró cuenta de sociedad para %s - verifica tu configuración!',
     officer = 'Oficial',
     not_authorized = 'No Autorizado',

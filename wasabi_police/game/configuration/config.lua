@@ -28,21 +28,22 @@ Config.CheckForUpdates = true -- Check for updates? Who would not want to know u
 -- 'cs' (Czech)
 -- If you would like us to add a language, join our discord and create a ticket!
 -- All locale strings can be found in /game/configuration/locales/
-Config.Language = 'de'
-Config.UIColor = '#0390fc'   -- Can be 'red', 'blue', or a hex '#FF0000'
+Config.Language = 'en'
+Config.UIColor = '#0390fc'     -- Can be 'red', 'blue', or a hex '#FF0000'
+Config.JailUIColor = '#0390fc' -- Can be 'red', 'blue', or a hex '#FF0000'
 
-Config.jobMenu = 'F6'        -- Default job menu key
-Config.useTarget = true      -- Enable target for police functions (Supports ox_target / qb-target)
-Config.MobileMenu = {        -- THIS WILL USE A REGULAR MENU RATHER THAN A CONTEXT STYLE MENU!
-    enabled = false,         -- Use a mobile menu rather than context? (Use arrow keys to navigate menu rather than mouse)
+Config.jobMenu = 'F6'          -- Default job menu key
+Config.useTarget = true        -- Enable target for police functions (Supports ox_target / qb-target)
+Config.MobileMenu = {          -- THIS WILL USE A REGULAR MENU RATHER THAN A CONTEXT STYLE MENU!
+    enabled = false,           -- Use a mobile menu rather than context? (Use arrow keys to navigate menu rather than mouse)
     position =
-    'bottom-right'           -- Choose where menu is positioned. Options : 'top-left' or 'top-right' or 'bottom-left' or 'bottom-right'
+    'bottom-right'             -- Choose where menu is positioned. Options : 'top-left' or 'top-right' or 'bottom-left' or 'bottom-right'
 }
-Config.UseRadialMenu = false -- Enable use of radial menu built in to ox_lib? (REQUIRES OX_LIB - Editable in client/radial.lua)
+Config.UseRadialMenu = false   -- Enable use of radial menu built in to ox_lib? (REQUIRES OX_LIB - Editable in client/radial.lua)
 
-Config.customCarlock = false -- If you use wasabi_carlock OR qb-carlock set to true(Add your own carlock system in wasabi_bridge/customize/client/carlock.lua)
+Config.customCarlock = false   -- If you use wasabi_carlock OR qb-carlock set to true(Add your own carlock system in wasabi_bridge/customize/client/carlock.lua)
 Config.billingSystem =
-'esx'                    -- Current options: false (Disabled) / 'default' (For built-in System)/'esx' (For esx_billing) / 'qb' (QBCore) / 'okok' (For okokBilling) (Easy to add more/fully customize in client/cl_customize.lua)
+'default'                      -- Current options: false (Disabled) / 'default' (For built-in System)/'esx' (For esx_billing) / 'qb' (QBCore) / 'okok' (For okokBilling) (Easy to add more/fully customize in client/cl_customize.lua)
 
 --ONLY IF USING 'default' BILLING SYSTEM
 Config.billingData = {
@@ -55,117 +56,77 @@ Config.billingData = {
     creditSociety = true,
 
     fines = { --Fine presets
-    { label = 'Körperverletzung, 10 HE', amount = 15000 },
-    { label = 'Schwere Körperverletzung, 15 HE', amount = 25000 },
-    { label = 'Versuchter Mord, max. 30 HE', amount = 40000 },
-    { label = 'Mord, max. 80 HE', amount = 80000 },
-    { label = 'Gefährliche Körperverletzung, 20 HE', amount = 20000 },
-    { label = 'Freiheitsberaubung/Entführung, max. 20 HE', amount = 30000 },
-    { label = 'Erpressung, max. 10 HE', amount = 10000 },
-    { label = 'Beleidigung', amount = 10000 },
-    { label = 'Üble Nachrede, max. 20 HE', amount = 10000 },
-    { label = 'Drohung', amount = 15000 },
-    { label = 'Morddrohung, max. 10 HE', amount = 20000 },
-    { label = 'Geiselnahme, max. 60 HE', amount = 60000 },
-    { label = 'Hausordnungsverstoß, max. 25 HE', amount = 4000 },
-    { label = 'Verleumdung, max. 10 HE', amount = 15000 },
-    { label = 'Falsche Verdächtigung, max. 20 HE', amount = 50000 },
-    { label = 'Nötigung', amount = 30000 },
-    { label = 'Versuchter Diebstahl, max. 10 HE', amount = 10000 },
-    { label = 'Diebstahl, max. 15 HE', amount = 20000 },
-    { label = 'Versuchter Raub, max. 20 HE', amount = 20000 },
-    { label = 'Raub, max. 25 HE', amount = 30000 },
-    { label = 'Sachbeschädigung', amount = 20000 },
-    { label = 'Schwarzgeldbesitz, max. 25 HE', amount = 30000 },
-    { label = 'Vermummungsverbot', amount = 10000 },
-    { label = 'Vortäuschen einer Straftat', amount = 40000 },
-    { label = 'Falschaussage', amount = 25000 },
-    { label = 'Meineid, max. 60 HE', amount = 100000 },
-    { label = 'Auflagenverstoß, max. 5 HE', amount = 15000 },
-    { label = 'Belästigung', amount = 20000 },
-    { label = 'Betrug', amount = 50000 },
-    { label = 'Erschleichen von Leistungen', amount = 50000 },
-    { label = 'Volksverhetzung', amount = 20000 },
-    { label = 'Unterlassene Hilfeleistung', amount = 10000 },
-    { label = 'Behinderung staatlicher Organe, max. 5 HE', amount = 20000 },
-    { label = 'Widerstand gegen Staatsgewalt, max. 30 HE', amount = 30000 },
-    { label = 'Entziehung polizeilicher Maßnahmen, max. 20 HE', amount = 15000 },
-    { label = 'Angriffe gegen staatliche Organisationen, max. 45 HE', amount = 50000 },
-    { label = 'Befreiung von Verdächtigen, max. 30 HE', amount = 20000 },
-    { label = 'Ausbruchsdelikte, max. 60 HE', amount = 20000 },
-    { label = 'Bestechung, max. 50 HE', amount = 25000 },
-    { label = 'Korruption, max. 100 HE, Berufsverbot', amount = 200000 },
-    { label = 'Amtsanmaßung, max. 60 HE', amount = 75000 },
-    { label = 'Hausfriedensbruch, max. 10 HE', amount = 30000 },
-    { label = 'Landfriedensbruch, max. 100 HE', amount = 150000 },
-    { label = 'Identitätsverweigerung, max. 50 HE', amount = 25000 },
-    { label = 'Nicht genehmigte Versammlung (Teilnahme)', amount = 10000 },
-    { label = 'Nicht genehmigte Versammlung (Organisation)', amount = 40000 },
-    { label = 'Umweltverschmutzung', amount = 25000 },
-    { label = 'Öffentliches Ärgernis, max. 15 HE', amount = 45000 },
-    { label = 'Betreten von Sperrzonen, max. 20 HE', amount = 35000 },
-    { label = 'Urkundenfälschung, max. 50 HE', amount = 60000 },
-    { label = 'Nachstellung, max. 10 HE', amount = 10000 },
-    { label = 'Wucher', amount = 40000 },
-    { label = 'Missbrauch von Notrufen, max. 10 HE', amount = 20000 },
-    { label = 'Offenbarung von Staatsgeheimnissen, 80 HE', amount = 100000 },
-    { label = 'Verletzung des höchstpersönlichen Lebensbereichs, max. 50 HE', amount = 50000 },
-    { label = 'Strafvereitelung, max. 50 HE', amount = 30000 },
-    { label = 'Beihilfe, max. 30 HE', amount = 30000 },
-    { label = 'Fahren ohne Führerschein/Fahrzeugpapiere', amount = 5000 },
-    { label = 'Führerschein ohne Fahrerlaubnis', amount = 5000 },
-    { label = 'Fahrzeug ohne Versicherung', amount = 5000 },
-    { label = 'Lärmbelästigung', amount = 5000 },
-    { label = 'Fahren ohne ordnungsgemäßen Zustand', amount = 5000 },
-    { label = 'Baufahrzeuge ohne Genehmigung', amount = 5000 },
-    { label = 'Organisieren eines illegalen Straßenrennens, max. 15 HE', amount = 20000 },
-    { label = 'Teilnehmen an illegalem Straßenrennen', amount = 10000 },
-    { label = 'Fahren unter Drogeneinfluss, max. 10 HE', amount = 10000 },
-    { label = 'Unerlaubtes Entfernen vom Unfallort, max. 5 HE', amount = 5000 },
-    { label = 'Unerlaubtes Entfernen bei Personenschaden, max. 10 HE', amount = 10000 },
-    { label = 'Unerlaubte Fahrzeugmodifikationen', amount = 10000 },
-    { label = 'Fahren mit nicht zugelassenem Fahrzeug', amount = 5000 },
-    { label = 'Fahren mit verkehrsuntauglichem Fahrzeug', amount = 5000 },
-    { label = 'Fernlicht in der Stadt', amount = 2500 },
-    { label = 'Parken auf Gehweg', amount = 2500 },
-    { label = 'Handy während der Fahrt', amount = 5000 },
-    { label = 'Aus-/Einsteigen auf der Straße', amount = 2500 },
-    { label = 'Geschwindigkeitsüberschreitung', amount = 15000 },
-    { label = 'Unzureichender Sicherheitsabstand', amount = 15000 },
-    { label = 'Schwerer Eingriff in den Straßenverkehr', amount = 27500 },
-    { label = 'Kein Platz bei Blaulicht/Einsatzhorn', amount = 30000 },
-    { label = 'Illegale Kurzwaffen, max. 15 HE', amount = 25000 },
-    { label = 'Illegale Langwaffen, max. 25 HE', amount = 40000 },
-    { label = 'Mehrere Waffen ohne Waffenschein, max. 10 HE', amount = 15000 },
-    { label = 'Staatswaffenbesitz, max. 25 HE', amount = 35000 },
-    { label = 'Wurfwaffen, max. 15 HE', amount = 10000 },
-    { label = 'Verkauf/Kauf illegaler Waffen, max. 25 HE', amount = 30000 },
-    { label = 'Verkauf von Staatswaffen, max. 25 HE', amount = 20000 },
-    { label = 'Ankauf illegaler Waffe, max. 20 HE', amount = 25000 },
-    { label = 'Ankauf ohne Waffenschein, max. 15 HE', amount = 20000 },
-    { label = 'Ankauf von Staatswaffen, härtestes Strafmaß', amount = 25000 },
-    { label = 'Anbau von Betäubungsmitteln, max. 25 HE', amount = 40000 },
-    { label = 'Herstellung von Betäubungsmitteln, max. 20 HE', amount = 40000 },
-    { label = 'Besitz von Betäubungsmitteln, max. 15 HE', amount = 25000 },
-    { label = 'Erwerb von Betäubungsmitteln, max. 15 HE', amount = 25000 },
-    { label = 'Verkauf von Betäubungsmitteln, max. 20 HE (Verdoppelung bei schweren Fällen/Wiederholung möglich)', amount = 35000 },
-    { label = 'Konsum von Betäubungsmitteln', amount = 10000 },                                    
+        { label = 'Attempt Robbery of Shop', amount = 1200 },
+        { label = 'Attempt Robbery of Bank', amount = 2400 },
+        { label = 'On-Duty Crime',           amount = 10000 },
+        { label = 'Driving On Off-Road',     amount = 2200 },
+        { label = 'Anti Gravity',            amount = 4200 },
     }
 }
 
 Config.OldQBManagement = false -- If you use older qb-management(Unrelated to ESX)
 
-Config.AdvancedParking = 'jg' -- Delete vehicles with their exports(Script named advanced parking)
+Config.AdvancedParking = false -- Delete vehicles with their exports(Script named advanced parking)
 
 Config.Jail = {
-    enabled = true, -- Enable jail feature?
-    input = true,    -- Enable input? Some needs it
-    jail = 'pickles',       -- Current options: 'qb' (For qb-prison) / 'rcore' (For rcore-prison) / 'tk_jail' (For tk_jail) / 'hd_jail' (For hd_jail) / 'myPrison' (For myPrison) / 'qalle-jail' (For qalle-jail) / 'plouffe ' (For Plouffe Jail) / 'mx' (For mxJail) / 'custom' (For custom)
+    enabled = true,                          -- Enable jail feature?
+    input = true,                            -- Enable input? Some needs it
+    jail = '',                               -- Current options: 'qb' (For qb-prison) / 'rcore' (For rcore-prison) / 'tk_jail' (For tk_jail) / 'hd_jail' (For hd_jail) / 'myPrison' (For myPrison) / 'qalle-jail' (For qalle-jail) / 'plouffe ' (For Plouffe Jail) / 'mx' (For mxJail) / 'custom' (For custom)
+    BuiltInPrison = {
+        enabled = true,                      -- Enable built-in prison system?
+        persistentJail = true,               -- Persistent jail? (If false, jail will be reset on reload)
+        coords = vec3(1845.0, 2585.0, 45.0), -- Coords of prison
+        spawn = {
+            { coords = vec4(1745.77, 2489.61, 50.41, 212.01) },
+            { coords = vec4(1751.86, 2492.73, 50.44, 213.77) },
+            { coords = vec4(1760.82, 2498.14, 50.42, 208.26) },
+            { coords = vec4(1754.85, 2494.59, 45.82, 212.49) },
+            { coords = vec4(1748.84, 2491.35, 45.80, 203.43) }
+        },
+        release = vec4(1845.0, 2585.0, 45.0, 0.0), -- Coords of released
+        jailOutfit = {
+            male = {                               -- Male variation
+                clothing = {
+                    -- Components / 0: Face 1: Mask 2: Hair 3: Torso 4: Leg 5: Parachute / bag 6: Shoes 7: Accessory 8: Undershirt 9: Kevlar 10: Badge 11: Torso 2
+                    -- https://docs.fivem.net/natives/?_0xD4F7B05C
+                    { component = 11, drawable = 5,  texture = 2 }, -- Torso
+                    { component = 8,  drawable = 15, texture = 0 }, -- Shirt
+                    { component = 4,  drawable = 6,  texture = 1 }, -- Pants
+                    { component = 6,  drawable = 16, texture = 7 }, -- Shoes
+                    { component = 3,  drawable = 5,  texture = 0 }, -- Arms
+                },
+                props = {
+                    -- Components / 0: Hats 1: Glasses 2: Ears 6: Watches 7: Bracelets
+                    -- https://docs.fivem.net/natives/?_0x93376B65A266EB5F
+
+                    --    { component = 0, drawable = 0, texture = 0 }, -- Hats
+                }
+            },
+            female = {
+                clothing = {
+                    -- Components / 0: Face 1: Mask 2: Hair 3: Torso 4: Leg 5: Parachute / bag 6: Shoes 7: Accessory 8: Undershirt 9: Kevlar 10: Badge 11: Torso 2
+                    -- https://docs.fivem.net/natives/?_0xD4F7B05C
+                    { component = 11, drawable = 4,  texture = 0 }, -- Torso
+                    { component = 8,  drawable = 15, texture = 0 }, -- Shirt
+                    { component = 4,  drawable = 25, texture = 0 }, -- Pants
+                    { component = 6,  drawable = 16, texture = 4 }, -- Shoes
+                    { component = 3,  drawable = 4,  texture = 0 }, -- Arms
+                },
+                props = {
+                    -- Components / 0: Hats 1: Glasses 2: Ears 6: Watches 7: Bracelets
+                    -- https://docs.fivem.net/natives/?_0x93376B65A266EB5F
+
+                    --    { component = 0, drawable = 0, texture = 0 }, -- Hats
+                }
+            }
+        },
+
+    },
 }
 -- NOTE: If using qb-prison, you must make one small change to qb-prison.
 -- SEE https://docs.wasabiscripts.com/scripts/wasabi_police/customizations#qb-prison-integration
 
-Config.searchPlayers = true     -- Allow police jobs to search players for items (Must have inventory in bridge or one already supported in cl_customize.lua - or add your own!)
+Config.searchPlayers = false     -- Allow police jobs to search players for items (Must have inventory in bridge or one already supported in cl_customize.lua - or add your own!)
 Config.weaponsAsItems = true     -- (If you're unsure leave as true!)This is typically for older ESX and inventories that still use weapons as weapons and not items
 
 Config.spikeStripsEnabled = true -- Enable functionality of spike strips (Disable if you use difference script for spike strips)
@@ -193,6 +154,143 @@ Config.GrantWeaponLicenses = {
     'bottom-right'           -- Choose where menu of player select is positioned. Options : 'top-left' or 'top-right' or 'bottom-left' or 'bottom-right'
 }
 
+Config.CCTVCameras = { -- CCTV Cameras
+    enabled = true,     -- Enable CCTV Cameras?
+    jobLock = 'police', -- Job lock? or access to all police jobs by using false
+    saveToDatabase = true, -- Save CCTV data to database? (If false, data will be stored in server memory/reset on server restarts)
+
+    jobs = {            -- Jobs & minimum ranks that can add/modify/delete CCTV Cameras
+        -- Must be in Config.policeJobs as well
+        police = 0,     -- Job 'police' with minimum rank 0
+        --        sheriff = 2,    -- Job 'sheriff' with minimum rank 2
+    },
+    destoryable = true, -- Can players destroy CCTV Cameras?
+    blip = {
+        enabled = true,      -- Enable blips for CCTV Cameras?
+        label = 'CCTV Camera', -- Blip label
+        sprite = 604,         -- Blip sprite
+        color = 5,            -- Blip color
+        scale = 0.5,          -- Blip scale
+        short = false,        -- Short range blip?
+    },
+
+    EnabledKeys = {  --Enabled keys while in camera view
+      --W A S D BackSpace 
+        32, 34, 8, 9, 177
+    },
+
+    options = {
+        {
+            label = 'CCTV Camera #1', -- Label of CCTV Camera
+            prop = 'prop_cctv_cam_01a', -- Prop name
+        },
+        {
+            label = 'CCTV Camera #2',
+            prop = 'prop_cctv_cam_01b',
+        },
+        {
+            label = 'CCTV Camera #3',
+            prop = 'prop_cctv_cam_06a',
+        },
+        {
+            label = 'CCTV Camera #4',
+            prop = 'prop_cctv_cam_05a',
+        },
+    },
+    locations = { -- Locations of CCTV Cameras
+        enabled = true, -- Enable locations of CCTV Cameras?
+        data = {
+        {
+   
+            name = 'Shop (Innocence Blvd)', -- Label of CCTV Camera
+            prop = 'prop_cctv_cam_06a', -- Prop name
+            coords = vector3(23.8389778137207, -1348.9283447265626, 31.53925323486328),  --coords":{"x":23.8389778137207,"y":-1348.9283447265626,"z":31.53925323486328}
+            heading = 119.99991607666016, --heading
+        },
+        {
+            name = 'Shop (Inseno Road)',
+            prop = 'prop_cctv_cam_06a',
+            coords = vector3(-3037.25, 584.399169921875, 9.89759731292724),
+            heading = 224.99984741210938,
+        },
+        {
+            name = 'Shop (Barbareno Road)',
+            prop = 'prop_cctv_cam_06a',
+            coords = vector3(-3240.68603515625, 999.1280517578125, 14.87293338775634),
+            heading = 199.9998016357422,
+        },
+        {
+            name = 'Shop (Great Ocean Highway)',
+            prop = 'prop_cctv_cam_06a',
+            coords = vector3(1726.5582275390626, 6414.02783203125, 37.07946395874023),
+            heading = 94.99994659423828,
+        },
+        {
+            name = 'Shop (Grape Seed Main Street)',
+            prop = 'prop_cctv_cam_06a',
+            coords = vector3(1706.2977294921876, 4926.40576171875, 44.10588836669922),
+            heading = 239.99984741210938,
+        },
+        {
+            name = 'Shop (Alhambra Drive)',
+            prop = 'prop_cctv_cam_06a',
+            coords = vector3(1960.42431640625, 3738.34716796875, 34.38598251342773),
+            heading = 149.9998321533203,
+        },
+        {
+            name = 'Shop (Route 68)',
+            prop = 'prop_cctv_cam_06a',
+            coords = vector3(549.0037841796875, 2672.68896484375, 43.89537048339844),
+            heading = 304.99969482421877,
+        },
+        {
+            name = 'Shop (Senora Freeway)',
+            prop = 'prop_cctv_cam_06a',
+            coords = vector3(2679.138671875, 3278.020263671875, 57.58337097167969),
+            heading = 179.999755859375,
+        },
+        {
+            name = 'Shop (Palomino Freeway)',
+            prop = 'prop_cctv_cam_06a',
+            coords = vector3(2558.8310546875, 380.1410827636719, 110.66519927978516),
+            heading = 209.9998016357422,
+        },
+        {
+            name = 'Shop (Clinton Avenue)',
+            prop = 'prop_cctv_cam_06a',
+            coords = vector3(371.39739990234377, 324.99755859375, 105.60862731933594),
+            heading = 104.99993133544922,
+        },
+        {
+            name = 'Shop (North Rockford Drive)',
+            prop = 'prop_cctv_cam_06a',
+            coords = vector3(-1827.2593994140626, 793.8814086914063, 140.25299072265626),
+            heading = 44.99998092651367,
+        },
+        {
+            name = 'Shop (Grove Street)',
+            prop = 'prop_cctv_cam_06a',
+            coords = vector3(-47.95944213867187, -1750.7666015625, 31.46323776245117),
+            heading = 324.99945068359377,
+        },
+        {
+            name = 'Shop (Ginger Street)',
+            prop = 'prop_cctv_cam_06a',
+            coords = vector3(-711.623779296875, -908.9114379882813, 21.25783157348632),
+            heading = 0.0,
+        },
+        {
+            name = 'Shop (Mirror Park Blvd)',
+            prop = 'prop_cctv_cam_06a',
+            coords = vector3(1158.4505615234376, -319.10296630859377, 71.24732971191406),
+            heading = 14.99969005584716,
+        },
+    }
+}
+
+}
+
+
 Config.RadarPosts = {           -- Radar posts for speed detection
 
     enabled = true,             -- Enable radar posts (Shows option in job menu for approved jobs)?
@@ -200,7 +298,7 @@ Config.RadarPosts = {           -- Radar posts for speed detection
 
     disableCameraFlash = false, -- Disable camera flash effect when player is caught speeding?
 
-    measurement = 'kmh',        -- Measurement of speed (Options: 'mph' / 'kmh')
+    measurement = 'mph',        -- Measurement of speed (Options: 'mph' / 'kmh')
 
     jobs = {                    -- Jobs & minimum ranks that can add/modify/delete radar posts
         -- Must be in Config.policeJobs as well
@@ -287,7 +385,7 @@ Config.handcuff = {                             -- Config in regards to cuffing
     hotkey = 'J',                               -- What key to press to handcuff people(Set to false for no hotkey)
     skilledEscape = {
         enabled = true,                         -- Allow criminal to simulate resisting by giving them a chance to break free from cuffs via skill check
-        difficulty = { 'hard', 'hard', 'hard' } -- Options: 'easy' / 'medium' / 'hard' (Can be stringed along as they are in config)
+        difficulty = { 'easy', 'easy', 'easy' } -- Options: 'easy' / 'medium' / 'hard' (Can be stringed along as they are in config)
     },
     cuffItem = {                                -- Have handcuffs as usable item? (ITEM NAME MUST BE IN ITEMS / YOU MUST ADD YOURSELF)
         enabled = false,                        -- Enable a handcuff usable item?? Must be in items table/database with name defined below
@@ -298,7 +396,7 @@ Config.handcuff = {                             -- Config in regards to cuffing
         enabled = false,                        -- Enable handcuffs to be able to be lockpicked off(MUST HAVE LOCKPICK ITEM IN ITEMS)
         item = 'bobby_pin',
         breakChance = 50,                       -- Chance of lockpick breaking if failed (Set to 100 for 100% or 0 for never breaking)
-        difficulty = { 'hard', 'hard', 'hard' } -- Options: 'easy' / 'medium' / 'hard' (Can be stringed along as they are in config)
+        difficulty = { 'easy', 'easy', 'easy' } -- Options: 'easy' / 'medium' / 'hard' (Can be stringed along as they are in config)
     }
 }
 
@@ -309,11 +407,11 @@ Config.policeJobs = { -- Police jobs
 }
 
 Config.GPSBlips = {
-    enabled = true,     -- Enabled?
-    item = true,        -- Item required? Note: You have to use it then
+    enabled = false,     -- Enabled?
+    item = false,        -- Item required? Note: You have to use it then
     sprites = {
-        none = 1,        -- Blip for when not in a vehicle
-        car = 56,        -- Blip for when in vehicles
+        none = 443,      -- Blip for when not in a vehicle
+        car = 672,       -- Blip for when in vehicles
         bike = 226,      -- Blip for when on bikes
         boat = 427,      -- Blip for when in boats
         helicopter = 43, -- Blip for when in helicopters
@@ -403,7 +501,7 @@ Config.Locations = {
         },
 
         bossMenu = {
-            enabled = false,                        -- Enable boss menu?
+            enabled = true,                        -- Enable boss menu?
             jobLock = 'police',                    -- Lock to specific police job? Set to false if not desired
             coords = vec3(460.64, -985.64, 30.73), -- Location of boss menu (If not using target)
             label = '[E] - Access Boss Menu',      -- Text UI label string (If not using target)
@@ -432,33 +530,31 @@ Config.Locations = {
                 [0] = {                                                                                  -- Grade number will be the name of each table(this would be grade 0)
                     { name = 'WEAPON_PISTOL',     label = 'Pistol',      multiple = false, price = 75 }, -- Set price to false if undesired
                     { name = 'WEAPON_NIGHTSTICK', label = 'Night Stick', multiple = false, price = 50 },
-                    { name = 'ammo-9' , label = '9mm Ammo', multiple = true, price = 10 }, -- Set multiple to true if you want ability to purchase more than one at a time
-                    { name = 'armour', label = 'Bulletproof Vest', multiple = false, price = 100 }, -- Example
+                    --  { name = 'ammo-9' , label = '9mm Ammo', multiple = true, price = 10 }, -- Set multiple to true if you want ability to purchase more than one at a time
+                    --  { name = 'armour', label = 'Bulletproof Vest', multiple = false, price = 100 }, -- Example
 
                 },
                 [1] = { -- This would be grade 1
                     { name = 'WEAPON_COMBATPISTOL', label = 'Combat Pistol', multiple = false, price = 150 },
                     { name = 'WEAPON_NIGHTSTICK',   label = 'Night Stick',   multiple = false, price = 50 },
-                    { name = 'ammo-9', label = '9mm Ammo', multiple = true, price = 10 }, -- Example
-                    { name = 'armour', label = 'Bulletproof Vest', multiple = false, price = 100 }, -- Example
+                    --  { name = 'ammo-9', label = '9mm Ammo', multiple = true, price = 10 }, -- Example
+                    --  { name = 'armour', label = 'Bulletproof Vest', multiple = false, price = 100 }, -- Example
                 },
                 [2] = { -- This would be grade 2
                     { name = 'WEAPON_COMBATPISTOL', label = 'Combat Pistol', multiple = false, price = 150 },
-                    { name = 'WEAPON_STUNGUN', label = 'Tazer', multiple = false, price = 150 },
                     { name = 'WEAPON_NIGHTSTICK',   label = 'Night Stick',   multiple = false, price = 50 },
                     { name = 'WEAPON_ASSAULTRIFLE', label = 'Assault Rifle', multiple = false, price = 1100 },
-                    { name = 'ammo-9', label = '9mm Ammo', multiple = true, price = 10 }, -- Set multiple to true if you want ability to purchase more than one at a time
-                    { name = 'ammo-rifle2', label = '5.56 Ammo', multiple = true, price = 20 }, -- Example
-                    { name = 'armour', label = 'Bulletproof Vest', multiple = false, price = 100 }, -- Example
+                    --  { name = 'ammo-9', label = '9mm Ammo', multiple = true, price = 10 }, -- Set multiple to true if you want ability to purchase more than one at a time
+                    --  { name = ammo-rifle, label = '5.56 Ammo', multiple = true, price = 20 }, -- Example
+                    --  { name = 'armour', label = 'Bulletproof Vest', multiple = false, price = 100 }, -- Example
                 },
                 [3] = { -- This would be grade 3
                     { name = 'WEAPON_COMBATPISTOL', label = 'Combat Pistol', multiple = false, price = 150 },
-                    { name = 'WEAPON_STUNGUN', label = 'Tazer', multiple = false, price = 150 },
                     { name = 'WEAPON_NIGHTSTICK',   label = 'Night Stick',   multiple = false, price = 50 },
                     { name = 'WEAPON_ASSAULTRIFLE', label = 'Assault Rifle', multiple = false, price = 1100 },
-                    { name = 'ammo-9', label = '9mm Ammo', multiple = true, price = 10 }, -- Set multiple to true if you want ability to purchase more than one at a time
-                    { name = 'ammo-rifle2', label = '5.56 Ammo', multiple = true, price = 20 }, -- Example
-                    { name = 'armour', label = 'Bulletproof Vest', multiple = false, price = 100 }, -- Example
+                    --  { name = 'ammo-9', label = '9mm Ammo', multiple = true, price = 10 }, -- Set multiple to true if you want ability to purchase more than one at a time
+                    --  { name = ammo-rifle, label = '5.56 Ammo', multiple = true, price = 20 }, -- Example
+                    --  { name = 'armour', label = 'Bulletproof Vest', multiple = false, price = 100 }, -- Example
                 },
             }
         },
@@ -477,12 +573,11 @@ Config.Locations = {
                         clothing = {
                             -- Components / 0: Face 1: Mask 2: Hair 3: Torso 4: Leg 5: Parachute / bag 6: Shoes 7: Accessory 8: Undershirt 9: Kevlar 10: Badge 11: Torso 2
                             -- https://docs.fivem.net/natives/?_0xD4F7B05C
-                            { component = 11, drawable = 204,  texture = 0 }, -- Torso
-                            { component = 8,  drawable = 83, texture = 0 }, -- Shirt
-                            { component = 4,  drawable = 136,  texture = 0 }, -- Pants
-                            { component = 6,  drawable = 145, texture = 0 }, -- Shoes
-                            { component = 3,  drawable = 0,  texture = 0 }, -- Arms
-                            { component = 9,  drawable = 23,  texture = 0 }, -- vest
+                            { component = 11, drawable = 5,  texture = 2 }, -- Torso
+                            { component = 8,  drawable = 15, texture = 0 }, -- Shirt
+                            { component = 4,  drawable = 6,  texture = 1 }, -- Pants
+                            { component = 6,  drawable = 16, texture = 7 }, -- Shoes
+                            { component = 3,  drawable = 5,  texture = 0 }, -- Arms
                         },
                         props = {
                             -- Components / 0: Hats 1: Glasses 2: Ears 6: Watches 7: Bracelets
@@ -495,12 +590,11 @@ Config.Locations = {
                         clothing = {
                             -- Components / 0: Face 1: Mask 2: Hair 3: Torso 4: Leg 5: Parachute / bag 6: Shoes 7: Accessory 8: Undershirt 9: Kevlar 10: Badge 11: Torso 2
                             -- https://docs.fivem.net/natives/?_0xD4F7B05C
-                            { component = 11, drawable = 195,  texture = 2 }, -- Torso
-                            { component = 8,  drawable = 163, texture = 0 }, -- Shirt
-                            { component = 4,  drawable = 215, texture = 0 }, -- Pants
-                            { component = 6,  drawable = 175, texture = 0 }, -- Shoes
-                            { component = 3,  drawable = 14,  texture = 0 }, -- Arms
-                            { component = 9,  drawable = 50,  texture = 0 }, -- vest
+                            { component = 11, drawable = 4,  texture = 0 }, -- Torso
+                            { component = 8,  drawable = 15, texture = 0 }, -- Shirt
+                            { component = 4,  drawable = 25, texture = 0 }, -- Pants
+                            { component = 6,  drawable = 16, texture = 4 }, -- Shoes
+                            { component = 3,  drawable = 4,  texture = 0 }, -- Arms
                         },
                         props = {
                             -- Components / 0: Hats 1: Glasses 2: Ears 6: Watches 7: Bracelets
@@ -511,27 +605,23 @@ Config.Locations = {
                     }
                 },
                 [2] = {              -- Order it will display
-                    label = 'Outfit Veste', -- Name of outfit that will display in menu
+                    label = 'Chief', -- Name of outfit that will display in menu
                     minGrade = 0,    -- Min grade level that can access? Set to 0 or false for everyone to use
                     male = {         -- Male variation
                         clothing = {
                             -- Components / 0: Face 1: Mask 2: Hair 3: Torso 4: Leg 5: Parachute / bag 6: Shoes 7: Accessory 8: Undershirt 9: Kevlar 10: Badge 11: Torso 2
-                            -- https://docs.fivem.net/natives/?_0xD4F7B05C  DAS WAR ICH
-                            { component = 8, drawable = 57, texture = 0 },-- tshirt
-                            { component = 3, drawable = 41, texture = 0 }, -- Arme
-                            { component = 10, drawable = 8, texture = 2 }, -- Badge
-                            { component = 4, drawable = 10, texture = 0 }, --beine
-                            { component = 6, drawable = 25, texture = 0 }, --schuhe
-                            { component = 9, drawable = 2, texture = 0 }, --kevlar veste
-                            { component = 11, drawable = 55, texture = 0 }, --Oberkörper
-                            
-                            
+                            -- https://docs.fivem.net/natives/?_0xD4F7B05C
+                            { component = 11, drawable = 15, texture = 0 }, -- Torso
+                            { component = 8,  drawable = 58, texture = 0 }, -- Shirt
+                            { component = 4,  drawable = 35, texture = 0 }, -- Pants
+                            { component = 6,  drawable = 24, texture = 0 }, -- Shoes
+                            { component = 3,  drawable = 15, texture = 0 }, -- Arms
                         },
                         props = {
                             -- Components / 0: Hats 1: Glasses 2: Ears 6: Watches 7: Bracelets
                             -- https://docs.fivem.net/natives/?_0x93376B65A266EB5F
 
-                                { component = 6, drawable = 0, texture = 0 }, -- watch
+                            --    { component = 0, drawable = 0, texture = 0 }, -- Hats
                         }
                     },
                     female = {
@@ -598,13 +688,13 @@ Config.Locations = {
         personalLocker = {
             enabled = false,                       -- Enable personal locker for this station?
             jobLock = 'police',                    -- Job lock?
-            coords = vec3(463.205627, -996.437927, 30.689518), -- Area to prompt personal locker
+            coords = vec3(462.64, -995.88, 30.69), -- Area to prompt personal locker
             range = 2.0,                           -- Range it will prompt from coords above
             label = '[E] - Access Personal Locker',
             target = {
                 enabled = false, -- If enabled, the location above will be obsolete
                 label = 'Access Personal Locker',
-                coords = vec3(463.205627, -996.437927, 30.689518),
+                coords = vec3(462.64, -995.88, 30.69),
                 heading = 354.94,
                 distance = 2.5,
                 width = 2.0,
@@ -635,7 +725,7 @@ Config.Locations = {
 
 
         vehicles = {                                   -- Vehicle Garage
-            enabled = false,                            -- Enable? False if you have you're own way for medics to obtain vehicles.
+            enabled = true,                            -- Enable? False if you have you're own way for medics to obtain vehicles.
             jobLock = 'police',                        -- Job lock? or access to all police jobs by using false
             zone = {
                 coords = vec3(463.69, -1019.72, 28.1), -- Area to prompt vehicle garage

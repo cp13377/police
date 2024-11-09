@@ -5,6 +5,12 @@ if not Config.Language then Config.Language = 'cs' end
 if Config.Language ~= 'cs' then return end
 
 Strings = {
+
+    jail_countdown_header = 'JSTE VE VĚZENÍ',
+    jail_countdown_sentence = '%s měsíců zbývá',
+    jail_time_up = 'Čas ve vězení vypršel',
+    jail_time_up_desc = 'Odpykal jste si svůj čas ve vězení.',
+
     no_society_account = 'Žádný účet společnosti nebyl nalezen - zkontrolujte svou konfiguraci!',
     officer = 'Úředník',
     not_authorized = 'Není oprávněno',

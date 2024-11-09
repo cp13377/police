@@ -2,304 +2,47 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wasabi Police</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            font-style: normal;
-            overflow: hidden; /* Verhindert Scrollen */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .akte-container {
-            width: 800px;
-            background-color: #f2f2f2;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: none;
-            visibility: visible;
-            opacity: 1;
-            transition: opacity 0.5s ease-in-out;
-            z-index: 9999;
-            text-transform: capitalize;
-        }
-
-        .akte-container::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            width: 100%;
-            height: 100%;
-            background-color: #f2f2f2;
-            z-index: -1;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            transform: rotate(-2deg);
-        }
-
-        .akte-header {
-            text-align: center;
-            margin-bottom: 30px;
-            position: relative;
-        }
-
-        .akte-header h1 {
-            font-size: 28px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin: 0;
-            color: #333;
-        }
-
-        .akte-header p {
-            font-size: 16px;
-            color: #555;
-        }
-
-        .akte-header img {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 120px;
-            height: 160px;
-            border: 1px solid #ccc;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-
-        .akte-section {
-            margin-bottom: 25px;
-        }
-
-        .akte-section h2 {
-            font-size: 20px;
-            color: #333;
-            border-bottom: 2px solid #ccc;
-            padding-bottom: 8px;
-            margin-bottom: 15px;
-        }
-
-        .akte-section p {
-            margin: 10px 0;
-            font-size: 16px;
-            line-height: 1.6;
-            color: #444;
-        }
-
-        .strafregister {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .fine-entry {
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            background-color: #f7f7f7;
-            position: relative;
-        }
-
-        .fine-entry::before {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: -30px;
-            width: 10px;
-            height: calc(100% - 20px);
-            background-color: #ff6666; /* Rot für nicht bezahlt */
-        }
-
-        .fine-entry.paid::before {
-            background-color: #66ff66; /* Grün für bezahlt */
-        }
-
-        .fine-entry h3 {
-            margin: 0 0 10px 0;
-            font-size: 18px;
-            color: #333;
-        }
-
-        .fine-entry p {
-            margin: 5px 0;
-            font-size: 14px;
-            color: #555;
-        }
-
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            color: #999;
-            border-top: 1px solid #ddd;
-            padding-top: 10px;
-            margin-top: 30px;
-        }
-
-        .camera-flash {
-            width: 100%;
-            height: 100%;
-            background: white;
-            display: none;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease-out;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wasabi Police</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
-    <div class="container">
-        <div class="camera-flash"></div>
-
-        <div class="akte-container">
-            <div class="akte-header">
-                <h1>Strafakte</h1>
-                <p>Fallakte für: <strong><span id="akte-name">Max Mustermann</span></strong></p>
-                <p>Datum der Erstellung: 06.10.2023</p>
-                <img id="mugshot" src="https://via.placeholder.com/120x160.png" alt="Spielerfoto">
-            </div>
-
-            <div class="akte-section">
-                <h2>Persönliche Informationen</h2>
-                <p><strong>Name:</strong> <span id="person-name">Max Mustermann</span></p>
-                <p><strong>Geburtsdatum:</strong> <span id="person-birthdate">01.01.1990</span></p>
-                <p><strong>Beruf:</strong> <span id="person-job">Mechaniker</span></p>
-            </div>
-
-            <div class="akte-section strafregister">
-                <h2>Strafregister</h2>
-                <!-- Dynamisch werden hier Einträge hinzugefügt -->
-            </div>
-
-            <div class="footer">
-                <p>Diese Akte ist vertraulich und darf nur von berechtigten Personen eingesehen werden.</p>
-            </div>
-        </div>
+  <div class="camera-flash"> </div>
+  <div id="camera-overlay" class="camera-overlay">
+    <!-- Header with REC and Channel info -->
+    <div class="overlay-header">
+      <div class="rec-indicator">
+        <span class="rec-dot">●</span> REC
+      </div>
     </div>
 
-    <script>
-        window.addEventListener('message', function(event) {
-            let data = event.data;
+    <!-- Crosshair in the center -->
+    <div class="crosshair"></div>
 
-            if (data.type === "setPlayerFines") {
-                const mainContainer = document.querySelector('.container');
-                if (mainContainer) {
-                    mainContainer.style.display = 'block';
-                }
+    <!-- Footer with Camera Info and Time -->
+    <div class="overlay-footer">
+      <!-- Camera number and time -->
+      <div class="cam-info">
+        <div class="camera-info-text">CAM 03</div>
+        <div class="time-display">00:00</div>
+      </div>
+    </div>
+  </div>
+  <div class="jail-counter">
+     <div class="heading">YOU ARE IN JAIL</div>
+     <div class="seperator"> </div>
+     <div class="sentence">4 Months Left</div>
+  </div>
 
-                const akteContainer = document.querySelector('.akte-container');
-                if (akteContainer) {
-                    akteContainer.style.display = 'block';
-
-                    let fines = typeof data.fines === 'string' ? JSON.parse(data.fines) : data.fines;
-                    let personalInfo = data.personalInfo;
-
-                    document.getElementById('akte-name').textContent = capitalizeFirstLetter(personalInfo.name);
-                    document.getElementById('person-name').textContent = capitalizeFirstLetter(personalInfo.name);
-                    document.getElementById('person-birthdate').textContent = personalInfo.birthdate;
-                    document.getElementById('person-job').textContent = capitalizeFirstLetter(personalInfo.job);
-
-                    const mugshot = document.getElementById('mugshot');
-                    mugshot.src = data.mugshotBase64 || 'https://via.placeholder.com/120x160.png';
-
-                    setPlayerFines(fines);
-                }
-            }
-
-            if (event.data.action === "convertToBase64") {
-                const img = new Image();
-                img.crossOrigin = "Anonymous";
-
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
-
-                    const base64Image = canvas.toDataURL('image/png');
-
-                    fetch(`https://${GetParentResourceName()}/receiveBase64`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            base64Image: base64Image
-                        })
-                    })
-                    .then(response => response.text())
-                    .then(result => console.log("Result from Server:", result))
-                    .catch(error => console.error("Error while sending Base64 to server:", error));
-                };
-
-                img.onerror = function() {};
-
-                img.src = `https://nui-img/${event.data.txd}/${event.data.txd}`;
-            }
-
-            if (data.type === "closeAkte") {
-                const akteContainer = document.querySelector('.akte-container');
-                if (akteContainer) {
-                    akteContainer.style.display = 'none';
-                }
-
-                const mainContainer = document.querySelector('.container');
-                if (mainContainer) {
-                    mainContainer.style.display = 'none';
-                }
-            }
-        });
-
-        document.addEventListener('keydown', function(event) {
-            if (event.key === "Escape") {
-                fetch(`https://${GetParentResourceName()}/closeAkte`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-            }
-        });
-
-        function capitalizeFirstLetter(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-        }
-
-        function setPlayerFines(fines) {
-            const strafregisterSection = document.querySelector('.strafregister');
-            if (!strafregisterSection) {
-                return;
-            }
-
-            strafregisterSection.innerHTML = '<h2>Strafregister</h2>';
-
-            fines.forEach(fine => {
-                const fineEntry = document.createElement('div');
-                fineEntry.className = `fine-entry ${fine.paid ? 'paid' : ''}`; // Fügt die Klasse "paid" hinzu, wenn bezahlt
-                fineEntry.innerHTML = `
-                    <h3>${fine.description}</h3>
-                    <p><strong>Betrag:</strong> $${fine.fine_amount}</p>
-                    <p><strong>Datum:</strong> ${fine.fine_date}</p>
-                    <p><strong>Status:</strong> ${fine.paid ? "Bezahlt" : "Nicht bezahlt"}</p>
-                `;
-                strafregisterSection.appendChild(fineEntry);
-            });
-        }
-    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="js/script.js"></script>
 </body>
+
 </html>

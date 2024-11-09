@@ -5,6 +5,12 @@ if not Config.Language then Config.Language = 'hi' end
 if Config.Language ~= 'hi' then return end
 
 Strings = {
+
+    jail_countdown_header = 'आप जेल में हैं',
+    jail_countdown_sentence = '%s महीने शेष',
+    jail_time_up = 'जेल का समय समाप्त',
+    jail_time_up_desc = 'आपने जेल में अपना समय पूरा कर लिया है।',
+
     no_society_account = 'कोई समाज खाता नहीं मिला - अपनी सेटिंग्स जांचें!',
     officer = 'अधिकारी',
     not_authorized = 'अधिकृत नहीं',

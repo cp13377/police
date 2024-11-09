@@ -5,6 +5,12 @@ if not Config.Language then Config.Language = 'nl' end
 if Config.Language ~= 'nl' then return end
 
 Strings = {
+
+    jail_countdown_header = 'JE BENT IN DE GEVANGENIS',
+    jail_countdown_sentence = '%s maanden resterend',
+    jail_time_up = 'Gevangenistijd voorbij',
+    jail_time_up_desc = 'Je hebt je tijd in de gevangenis uitgezeten.',
+
     no_society_account = 'Geen maatschappijaccount gevonden voor %s - controleer je configuratie!',
     officer = 'Officier',
     not_authorized = 'Niet Geautoriseerd',

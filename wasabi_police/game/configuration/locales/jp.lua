@@ -5,6 +5,12 @@ if not Config.Language then Config.Language = 'jp' end
 if Config.Language ~= 'jp' then return end
 
 Strings = {
+
+    jail_countdown_header = 'あなたは刑務所にいます',
+    jail_countdown_sentence = '残り%sヶ月',
+    jail_time_up = '刑期が終了しました',
+    jail_time_up_desc = '刑期を全て服役しました。',
+
     no_society_account = '%s の社会アカウントが見つかりません - 設定を確認してください！',
     officer = '警官',
     not_authorized = '権限なし',

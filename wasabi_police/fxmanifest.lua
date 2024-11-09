@@ -1,39 +1,28 @@
-shared_script '@chester_ped/shared_fg-obfuscated.lua'
+-----------------For support, scripts, and more----------------
+--------------- https://discord.gg/wasabiscripts  -------------
+---------------------------------------------------------------
 fx_version 'cerulean'
 game 'gta5'
 lua54 'yes'
 
 description 'Wasabi ESX/QBCore Police Job'
 author 'wasabirobby'
-version '1.8.1'
+version '1.8.7'
 
 ui_page 'ui/index.html'
-files { 'ui/*', 'ui/**/*', 'ui/akte.html' }
+files { 'ui/*', 'ui/**/*' }
 
-shared_scripts { 
-    '@wasabi_bridge/import.lua', 
-    '@ox_lib/init.lua',  -- Hinzufügen von ox_lib in shared_scripts
-    'game/configuration/config.lua', 
-    'game/configuration/locales/*.lua' 
-}
+
+
+shared_scripts { '@wasabi_bridge/import.lua', 'game/configuration/config.lua', 'game/configuration/locales/*.lua' }
 
 client_scripts { 'game/client/*.lua' }
 
-server_scripts { 
-    '@oxmysql/lib/MySQL.lua', 
-    'game/server/*.lua' 
-}
+server_scripts { '@oxmysql/lib/MySQL.lua', 'game/server/*.lua' }
 
-dependencies { 
-    'oxmysql', 
-    'wasabi_bridge', 
-    'ox_lib'  -- ox_lib als Abhängigkeit hinzufügen
-}
+dependencies { 'oxmysql', 'wasabi_bridge' }
 
-provides { 
-    'esx_policejob', 
-    'qb-policejob' 
-}
+provides { 'esx_policejob', 'qb-policejob' }
 
 escrow_ignore {
   'game/configuration/*.lua',
@@ -43,7 +32,5 @@ escrow_ignore {
   'game/client/radial.lua',
   'game/server/sv_customize.lua'
 }
-
-dependency '/assetpacks'
 
 dependency '/assetpacks'

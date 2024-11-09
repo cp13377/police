@@ -5,8 +5,10 @@ if not wsb then return print((Strings.no_wsb):format(GetCurrentResourceName())) 
 playerLoaded, isDead, isBusy, disableKeys, cuffProp, isCuffed, inMenu, isRagdoll, cuffTimer, escorting, escorted, GSRData =
     nil, nil, nil, nil, nil, nil, nil, nil, {}, {}, {}, {}
 QBCore = nil
-RadarPostProp, ClosestSpeedTrap, SpeedTraps = nil, nil, {}
+RadarPostProp, ClosestSpeedTrap, SpeedTraps, JailTime, InJail = nil, nil, {}, 0, false
+CCTVCameras = {}
 OnlinePoliceCount = 0
+local oldJob = nil
 if wsb.framework == 'qb' then QBCore = exports['qb-core']:GetCoreObject() end
 
 
@@ -18,8 +20,19 @@ RegisterNetEvent('wasabi_police:tackle', function()
     tacklePlayer()
 end)
 
+AddEventHandler('wasabi_bridge:onPlayerLogout', function()
+    if wsb.hasGroup(Config.policeJobs) and wsb.isOnDuty() then
+        TriggerServerEvent('wasabi_police:addPoliceCount', false)
+    end
+end)
+
 AddEventHandler('wasabi_bridge:onPlayerSpawn', function()
     isDead = false
+end)
+
+AddEventHandler('wasabi_bridge:onPlayerLogout', function()
+    InJail = false
+    SendNUIMessage({ action = 'jailCounter' })
 end)
 
 AddEventHandler('wasabi_bridge:onPlayerDeath', function()
@@ -46,9 +59,13 @@ end)
 RegisterNetEvent('wasabi_bridge:playerLoaded', function()
     playerLoaded = true
     PersistentCuffCheck()
+    CheckJailTime()
     SpeedTraps = InitializeSpeedTraps()
+    CCTVCameras = InitializeCCTVCameras()
     if wsb.hasGroup(Config.policeJobs) then
-        TriggerServerEvent('wasabi_police:updateCopCount')
+        if wsb.isOnDuty() then
+            TriggerServerEvent('wasabi_police:addPoliceCount', true)
+        end
         if Config.GPSBlips.enabled and not Config.GPSBlips.item then
             if wsb.framework == 'qb' and wsb.isOnDuty() then
                 TriggerServerEvent('wasabi_police:addOfficerToGPS')
@@ -59,6 +76,8 @@ RegisterNetEvent('wasabi_bridge:playerLoaded', function()
     end
     TriggerServerEvent('wasabi_police:getPoliceOnline')
 end)
+
+
 
 RegisterNetEvent('police:SetCopCount', function(count)
     OnlinePoliceCount = count
@@ -196,6 +215,7 @@ RegisterNetEvent('wasabi_police:arrested', function(pdId, type)
     FreezeEntityPosition(pdPed, false)
     RemoveAnimDict('mp_arrest_paired')
     if not escaped then
+        if IsPedInAnyVehicle(wsb.cache.ped, true) then TaskLeaveVehicle(wsb.cache.ped, wsb.cache.vehicle, 16) end
         handcuffed(type)
     end
     isBusy = false
@@ -209,7 +229,10 @@ RegisterNetEvent('wasabi_police:arrest', function()
     isBusy = false
 end)
 
+local handCuffing = false
 RegisterNetEvent('wasabi_police:handcuffPlayer', function(args)
+    if handCuffing then return end
+    handCuffing = true
     local approved = IsTriggerApproved(GetInvokingResource())
     local hasItem = true
     if Config.handcuff?.cuffItem?.enabled and Config.handcuff?.cuffItem?.required then
@@ -217,6 +240,11 @@ RegisterNetEvent('wasabi_police:handcuffPlayer', function(args)
         if not approved then approved = (hasItem and hasItem > 0) end
     end
     if not approved then return end
+    if isCuffed then return end
+    if wsb.cache.vehicle then
+        TriggerEvent('wasabi_bridge:notify', Strings.in_vehicle, Strings.in_vehicle_desc, 'error')
+        return
+    end
     local type = args?.type or args?.args?.type or Config.handcuff.defaultCuff or 'hard'
     local coords = GetEntityCoords(wsb.cache.ped)
     local player = wsb.getClosestPlayer(vec3(coords.x, coords.y, coords.z), 2.0, false)
@@ -224,7 +252,14 @@ RegisterNetEvent('wasabi_police:handcuffPlayer', function(args)
         TriggerEvent('wasabi_bridge:notify', Strings.no_nearby, Strings.no_nearby_desc, 'error')
         return
     end
+    if GetVehiclePedIsIn(GetPlayerPed(player), false) ~= 0 then
+        TriggerEvent('wasabi_bridge:notify', Strings.in_vehicle, Strings.in_vehicle_desc, 'error')
+        return
+    end
     handcuffPlayer(GetPlayerServerId(player), type)
+    SetTimeout(7000, function()
+        handCuffing = false
+    end)
 end)
 
 RegisterNetEvent('wasabi_police:uncuffAnim', function(target)
@@ -465,6 +500,34 @@ end)
 
 RegisterNetEvent('wasabi_police:updateSpeedTrapName', function(id, name)
     UpdateSpeedTrapName(id, name)
+end)
+
+AddEventHandler('wasabi_police:cctvCameras', function()
+    CCTVMenu()
+end)
+
+AddEventHandler('wasabi_police:createCCTVCamera', function()
+    CreateCCTVCamera()
+end)
+
+AddEventHandler('wasabi_police:placeCCTVCamera', function(data)
+    PlaceCCTVCamera(data.prop)
+end)
+
+AddEventHandler('wasabi_police:manageCCTVCamera', function(data)
+    ManageCCTVCamera(data.id)
+end)
+
+AddEventHandler('wasabi_police:renameCCTVCamera', function(data)
+    RenameCCTVCamera(data.id)
+end)
+
+RegisterNetEvent('wasabi_police:updateCCTVCameraName', function(id, name)
+    UpdateCCTVCameraName(id, name)
+end)
+
+AddEventHandler('wasabi_police:viewCCTVCamera', function(data)
+    ViewCCTVCamera(data.id)
 end)
 
 AddEventHandler('wasabi_police:spawnProp', function(index)
@@ -857,6 +920,7 @@ end
 -- Main thread
 CreateThread(function()
     while not wsb.playerLoaded do Wait(500) end
+    oldJob = wsb.playerData.job
     if Config.UseRadialMenu then
         AddRadialItems()
     end
@@ -869,6 +933,10 @@ CreateThread(function()
                 num = id,
                 event = 'wasabi_police:searchPlayer',
                 label = Strings.search_player,
+                canInteract = function()
+                    if not wsb.isOnDuty() then return false end
+                    return true
+                end,
                 job = pdJobs,
                 groups = pdJobs,
             }
@@ -880,6 +948,10 @@ CreateThread(function()
                 event = 'wasabi_police:seizeCash',
                 icon = 'fas fa-sack-dollar',
                 label = Strings.seize_cash_title,
+                canInteract = function()
+                    if not wsb.isOnDuty() then return false end
+                    return true
+                end,
                 job = pdJobs,
                 groups = pdJobs,
             }
@@ -889,19 +961,12 @@ CreateThread(function()
             event = 'wasabi_police:checkId',
             icon = 'fas fa-id-card',
             label = Strings.check_id,
+            canInteract = function()
+                if not wsb.isOnDuty() then return false end
+                return true
+            end,
             job = pdJobs,
             groups = pdJobs,
-        }
-        options[#options + 1] = {
-            num = #options + 1,
-            event = 'wasabi_police:viewFiles',
-            icon = 'fas fa-folder-open',
-            label = 'Akten Einsicht',
-            job = pdJobs,
-            groups = pdJobs,
-            action = function()
-                print("Akten Einsicht wurde aufgerufen.")
-            end
         }
         options[#options + 1] = {
             num = #options + 1,
@@ -909,6 +974,10 @@ CreateThread(function()
             event = 'wasabi_police:handcuffPlayer',
             icon = 'fas fa-bandage',
             label = Strings.handcuff_hard_player,
+            canInteract = function()
+                if not wsb.isOnDuty() then return false end
+                return true
+            end,
             job = pdJobs,
             groups = pdJobs,
         }
@@ -918,6 +987,10 @@ CreateThread(function()
             event = 'wasabi_police:handcuffPlayer',
             icon = 'fas fa-bandage',
             label = Strings.handcuff_soft_player,
+            canInteract = function()
+                if not wsb.isOnDuty() then return false end
+                return true
+            end,
             job = pdJobs,
             groups = pdJobs,
         }
@@ -926,6 +999,10 @@ CreateThread(function()
             event = 'wasabi_police:escortPlayer',
             icon = 'fas fa-hand-holding-hand',
             label = Strings.escort_player,
+            canInteract = function()
+                if not wsb.isOnDuty() then return false end
+                return true
+            end,
             job = pdJobs,
             groups = pdJobs,
         }
@@ -934,6 +1011,10 @@ CreateThread(function()
             event = 'wasabi_police:inVehiclePlayer',
             icon = 'fas fa-arrow-right-to-bracket',
             label = Strings.put_in_vehicle,
+            canInteract = function()
+                if not wsb.isOnDuty() then return false end
+                return true
+            end,
             job = pdJobs,
             groups = pdJobs,
         }
@@ -942,6 +1023,10 @@ CreateThread(function()
             event = 'wasabi_police:outVehiclePlayer',
             icon = 'fas fa-arrow-right-from-bracket',
             label = Strings.take_out_vehicle,
+            canInteract = function()
+                if not wsb.isOnDuty() then return false end
+                return true
+            end,
             job = pdJobs,
             groups = pdJobs,
         }
@@ -960,6 +1045,7 @@ CreateThread(function()
                     job = pdJobs,
                     groups = pdJobs,
                     canInteract = function()
+                        if not wsb.isOnDuty() then return false end
                         return escorting and escorting.active and escorting.target and true or false
                     end
                 },
@@ -971,6 +1057,7 @@ CreateThread(function()
                     job = pdJobs,
                     groups = pdJobs,
                     canInteract = function()
+                        if not wsb.isOnDuty() then return false end
                         local coords = GetEntityCoords(wsb.cache.ped)
                         local player = wsb.getClosestPlayer(vec3(coords.x, coords.y, coords.z), 2.0, false)
                         return player and IsPedInAnyVehicle(GetPlayerPed(player), false) and true or false
@@ -1358,6 +1445,10 @@ CreateThread(function()
                     end,
 
                     onExit = function(self)
+                        if textUI then
+                            wsb.hideTextUI()
+                            textUI = nil
+                        end
                         if ped then
                             local model = GetEntityModel(ped)
                             SetModelAsNoLongerNeeded(model)
@@ -1631,6 +1722,176 @@ if Config.RadarPosts and Config.RadarPosts.enabled then
     end)
 end
 
+-- CCTV Cameras
+if Config.CCTVCameras and Config.CCTVCameras.enabled then
+    CreateThread(function()
+        local textUI = false
+        local previousProp = nil
+
+        while true do
+            local sleep = 1500
+            if CCTVCameraProp then
+                sleep = 0
+                if previousProp and previousProp ~= CCTVCameraProp then
+                    if DoesEntityExist(previousProp) then
+                        SetEntityDrawOutline(previousProp, false)
+                        DeleteEntity(previousProp)
+                    end
+                    previousProp = CCTVCameraProp
+                end
+                if not DoesEntityExist(CCTVCameraProp) then
+                    CCTVCameraProp = nil
+                    if textUI then
+                        wsb.hideTextUI()
+                        textUI = false
+                    end
+                else
+                    DisableControlAction(0, 45, true)
+                    DisableControlAction(0, 140, true)
+                    DisableControlAction(0, 177, true)
+                    DisableControlAction(0, 200, true)
+                    DisablePlayerFiring(PlayerId(), true)
+
+                    if not textUI then
+                        wsb.showTextUI('E - Place \n Q - Rotate  \n BACK - Cancel')
+                        SetEntityDrawOutline(CCTVCameraProp, true)
+                        SetEntityDrawOutlineColor(3, 144, 252, 255)
+                        textUI = true
+                    end
+
+                    local flag = 511
+                    local hit, entityHit, endCoords, distance, lastEntity, entityType
+                    local playerCoords = GetEntityCoords(wsb.cache.ped)
+                    hit, entityHit, endCoords = RayCastFromCam(flag, 4, 25)
+                    distance = #(playerCoords - endCoords)
+
+                    if entityHit ~= 0 and entityHit ~= lastEntity then
+                        local success, result = pcall(GetEntityType, entityHit)
+                        entityType = success and result or 0
+                    end
+
+                    if entityType == 0 then
+                        local _flag = flag == 511 and 26 or 511
+                        local _hit, _entityHit, _endCoords = RayCastFromCam(_flag, 4, 25)
+                        local _distance = #(playerCoords - _endCoords)
+
+                        if _distance < distance then
+                            flag, hit, entityHit, endCoords, distance = _flag, _hit, _entityHit, _endCoords, _distance
+
+                            if entityHit ~= 0 then
+                                local success, result = pcall(GetEntityType, entityHit)
+                                entityType = success and result or 0
+                            end
+                        end
+                    end
+
+                    SetEntityCoords(CCTVCameraProp, endCoords.x, endCoords.y, endCoords.z, false, false,
+                        false, false)
+                    if IsDisabledControlPressed(0, 44) then -- Rotate
+                        adjustHeading(CCTVCameraProp, 5)
+                        Wait(10)
+                    end
+
+                    if IsDisabledControlJustPressed(0, 177) then -- Cancel
+                        SetPauseMenuActive(false)
+                        SetEntityDrawOutline(CCTVCameraProp, false)
+                        DeleteEntity(CCTVCameraProp)
+                        CCTVCameraProp = nil
+                        textUI = false
+                        wsb.hideTextUI()
+                    end
+
+                    if IsControlJustPressed(0, 38) and CCTVCameraProp then
+                        local objectCoords = GetEntityCoords(CCTVCameraProp)
+                        local objHeading = GetEntityHeading(CCTVCameraProp)
+                        local model = GetEntityModel(CCTVCameraProp)
+                        local configIndex = 0
+                        for i = 1, #Config.CCTVCameras.options do
+                            if model == Config.CCTVCameras.options[i].prop or model == joaat(Config.CCTVCameras.options[i].prop) then
+                                configIndex = i
+                                local input = wsb.inputDialog(Strings.new_cctv, { Strings.name }, Config.UIColor)
+                                if not input or not input[1] then
+                                    TriggerEvent('wasabi_bridge:notify', Strings.incorrect_input,
+                                        Strings.incorrect_input_cancel,
+                                        'error')
+                                    goto continue
+                                end
+                                local created = wsb.awaitServerCallback('wasabi_police:addccctvCamera', objectCoords,
+                                    objHeading,
+                                    configIndex, input)
+
+                                if created then
+                                    TriggerEvent('wasabi_bridge:notify', Strings.cctv,
+                                        Strings.cctv_placed,
+                                        'success')
+                                else
+                                    TriggerEvent('wasabi_bridge:notify', Strings.cctv,
+                                        Strings.cctv_failed,
+                                        'error')
+                                end
+                            end
+                        end
+                        :: continue ::
+                        SetEntityDrawOutline(CCTVCameraProp, false)
+                        DeleteObject(CCTVCameraProp)
+                        CCTVCameraProp = nil
+                        textUI = false
+                        wsb.hideTextUI()
+                    end
+                end
+            elseif previousProp then
+                if DoesEntityExist(previousProp) then
+                    SetEntityDrawOutline(previousProp, false)
+                    DeleteEntity(previousProp)
+                end
+                previousProp = nil
+            end
+            Wait(sleep)
+        end
+    end)
+end
+
+function CameraThread()
+    CreateThread(function()
+        local count = 0
+        while CreatedCamera do
+            local sleep = 5
+            SetTimecycleModifier("scanline_cam_cheap")
+            SetTimecycleModifierStrength(1.5)
+            DisplayRadar(false)
+            DisableAllControlActions(0)
+            if Config.CCTVCameras and next(Config.CCTVCameras.EnabledKeys) then
+                for _, keys in pairs(Config.CCTVCameras.EnabledKeys) do
+                    EnableControlAction(0, keys, true)
+                end
+            end
+            -- CLOSE CAMERAS
+            if IsControlJustPressed(1, 177) then
+                CloseCamera()
+            end
+
+            if LocalPlayer.state.dead then
+                CloseCamera()
+            end
+
+            -- CAMERA ROTATION CONTROLS
+            CameraRotation()
+            if CameraIndex and CameraIndex.destory then
+                CloseCamera()
+            end
+            count = count + sleep
+            if count > 1000 then
+                count = 0
+                SendNUIMessage({
+                    action = 'updateCameraTime',
+                    time = string.format("%02d:%02d", GetClockHours(), GetClockMinutes())
+                })
+            end
+            Wait(sleep)
+        end
+    end)
+end
+
 -- Prop placement loop
 CreateThread(function()
     while wsb.playerData?.job == nil do Wait(500) end
@@ -1752,6 +2013,9 @@ end
 AddEventHandler('onResourceStart', function(resourceName)
     if GetCurrentResourceName() ~= resourceName or not wsb?.playerLoaded then return end
     PersistentCuffCheck()
+    if Config.Jail.BuiltInPrison.enabled and Config.Jail.BuiltInPrison.persistentJail then
+        CheckJailTime()
+    end
     if not Config.UseRadialMenu then return end
     AddRadialItems()
 end)
@@ -1783,6 +2047,20 @@ RegisterNetEvent('wasabi_police:initSpeedTraps', function(traps)
             trap.coords = vec3(trap.coords.x, trap.coords.y, trap.coords.z)
             trap.blip = CreateBlip(trap.coords, Config.RadarPosts.blip.sprite, Config.RadarPosts.blip.color,
                 Config.RadarPosts.blip.label, Config.RadarPosts.blip.scale, false, 'coords', Config.RadarPosts.blip
+                .short)
+        end
+    end
+end)
+
+RegisterNetEvent('wasabi_police:initCCTVCameras', function(cameras)
+    CCTVCameras = cameras
+    for i = 1, #CCTVCameras do
+        local camera = CCTVCameras[i]
+        camera.point = AddCCTVCameraPoint(camera, i)
+        if Config.CCTVCameras.blip.enabled then
+            camera.coords = vec3(camera.coords.x, camera.coords.y, camera.coords.z)
+            camera.blip = CreateBlip(camera.coords, Config.CCTVCameras.blip.sprite, Config.CCTVCameras.blip.color,
+                Config.CCTVCameras.blip.label, Config.CCTVCameras.blip.scale, false, 'coords', Config.CCTVCameras.blip
                 .short)
         end
     end
@@ -1824,9 +2102,79 @@ RegisterNetEvent('wasabi_police:removeSpeedTrap', function(id)
     ClosestSpeedTrap = nil
 end)
 
+RegisterNetEvent('wasabi_police:repairCCTVCamera', function(data)
+    local camera = GetCCTVCameraById(data.id)
+    if not camera then return end
+
+    if not ClosestCCTVCamera or (CCTVCameras[ClosestCCTVCamera] and CCTVCameras[ClosestCCTVCamera].id ~= data.id) then
+        TriggerEvent('wasabi_bridge:notify', Strings.cctv, Strings.cctv_not_closest, 'info')
+        return
+    end
+    if not camera.destory then
+        TriggerEvent('wasabi_bridge:notify', Strings.cctv, Strings.cctv_not_broken, 'info')
+        return
+    end
+    if camera.object then
+        local maxHealth = GetEntityMaxHealth(camera.object)
+        SetEntityHealth(camera.object, maxHealth)
+    end
+    local repaired = wsb.awaitServerCallback('wasabi_police:repairCCTVCameraById', data.id)
+    if repaired then
+        TriggerEvent('wasabi_bridge:notify', Strings.cctv, Strings.cctv_repaired, 'success')
+    else
+        TriggerEvent('wasabi_bridge:notify', Strings.cctv, Strings.cctv_repair_failed, 'error')
+    end
+end)
+
+RegisterNetEvent('wasabi_police:updateCCTVCameraRepair', function(id, destroy)
+    local camera = GetCCTVCameraById(id)
+    if not camera then return end
+    camera.destory = destroy
+end)
+
+RegisterNetEvent('wasabi_police:addNewCCTVCamera', function(cctv)
+    local tblKey = #CCTVCameras + 1
+    CCTVCameras[tblKey] = cctv
+    CCTVCameras[tblKey].point = AddCCTVCameraPoint(cctv, tblKey)
+    if Config.CCTVCameras.blip.enabled then
+        CCTVCameras[tblKey].blip = CreateBlip(vec3(cctv.coords.x, cctv.coords.y, cctv.coords.z),
+            Config.CCTVCameras.blip.sprite, Config.CCTVCameras.blip.color,
+            Config.CCTVCameras.blip.label, Config.CCTVCameras.blip.scale, false, 'coords', Config.CCTVCameras.blip.short)
+    end
+end)
+
+RegisterNetEvent('wasabi_police:removeCCTVCamera', function(id)
+    if type(id) == 'table' then
+        TriggerServerEvent('wasabi_police:removeCCTVCamera', id.id)
+        return
+    end
+    local newCameras = {}
+    for i = 1, #CCTVCameras do
+        if CCTVCameras[i].id == id then
+            if CCTVCameras[i].point then
+                CCTVCameras[i].point:remove()
+            end
+            if CCTVCameras[i].object then
+                DeleteEntity(CCTVCameras[i].object)
+            end
+            if CCTVCameras[i].blip then
+                RemoveBlip(CCTVCameras[i].blip)
+            end
+        else
+            newCameras[#newCameras + 1] = CCTVCameras[i]
+        end
+    end
+    CCTVCameras = newCameras
+    ClosestCCTVCamera = nil
+end)
+
 --Update Cop Counter
-local oldJob = nil
 RegisterNetEvent('wasabi_bridge:setJob', function(JobInfo)
+    if not oldJob then
+        oldJob = JobInfo
+        return
+    end
+
     local function isInList(str, tbl)
         for _, value in ipairs(tbl) do
             if value == str then
@@ -1835,10 +2183,33 @@ RegisterNetEvent('wasabi_bridge:setJob', function(JobInfo)
         end
         return false
     end
-    if isInList(JobInfo.name, Config.policeJobs) or not oldJob or isInList(oldJob, Config.policeJobs) then
-        TriggerServerEvent('wasabi_police:updateCopCount')
+    if isInList(oldJob.name, Config.policeJobs) and not isInList(JobInfo.name, Config.policeJobs) then
+        TriggerServerEvent('wasabi_police:addPoliceCount', false)
+        oldJob = JobInfo
+        return
     end
-    oldJob = JobInfo.name
+
+    if not isInList(oldJob.name, Config.policeJobs) and isInList(JobInfo.name, Config.policeJobs) then
+        if wsb.isOnDuty() then
+            TriggerServerEvent('wasabi_police:addPoliceCount', true)
+        end
+        oldJob = JobInfo
+        return
+    end
+
+    if oldJob.name == JobInfo.name and isInList(JobInfo.name, Config.policeJobs) then
+        if not isInList(JobInfo.name, Config.policeJobs) then return end
+        if wsb.framework == 'qb' then
+            if oldJob.onduty == JobInfo.onduty then return end
+            if oldJob.onduty and not JobInfo.onduty then
+                TriggerServerEvent('wasabi_police:addPoliceCount', false)
+            elseif not oldJob.onduty and JobInfo.onduty then
+                TriggerServerEvent('wasabi_police:addPoliceCount', true)
+            end
+        end
+    end
+
+    oldJob = JobInfo
 end)
 
 RegisterCommand('pdJobMenu', function()
@@ -1867,6 +2238,76 @@ if Config.Jail.enabled and Config.Jail.jail == 'qb' then
     end)
 end
 
+function CheckJailTime()
+    if not Config.Jail.BuiltInPrison.persistentJail then return end
+
+    while not wsb?.playerLoaded or not wsb?.playerData do Wait(1000) end
+
+    JailTime = false
+
+    if wsb.framework == 'esx' then
+        JailTime = wsb.awaitServerCallback('wasabi_police:jailCheck')
+    elseif wsb.framework == 'qb' then
+        JailTime = wsb.playerData.metadata.injail or false
+    end
+    if JailTime ~= 0 then
+        TriggerServerEvent('wasabi_police:server:sendToJail', nil, JailTime)
+    end
+end
+
+local function inPrison(time)
+    InJail, JailTime = true, time
+    CreateThread(function()
+        while JailTime > 0 and InJail do
+            SendNUIMessage({
+                action = 'jailCounter',
+                header = Strings.jail_countdown_header,
+                sentence = Strings.jail_countdown_sentence:format(JailTime),
+                color = Config.JailUIColor
+            })
+            Wait(60000) -- 1 minute
+            if JailTime > 0 and InJail then
+                JailTime -= 1
+                if JailTime <= 0 then
+                    JailTime = 0
+                    SendNUIMessage({ action = 'jailCounter' })
+                    TriggerEvent('wasabi_bridge:notify', Strings.jail_time_up, Strings.jail_time_up_desc, 'success')
+                end
+                TriggerServerEvent("wasabi_police:setJailStatus", JailTime)
+            end
+        end
+    end)
+end
+
+RegisterNetEvent('wasabi_police:jailPlayer', function(time)
+    DoScreenFadeOut(500)
+    while not IsScreenFadedOut() do
+        Wait(10)
+    end
+    local randomStartPosition = Config.Jail.BuiltInPrison.spawn[math.random(1, #Config.Jail.BuiltInPrison.spawn)]
+    SetEntityCoords(wsb.cache.ped, randomStartPosition.coords.x, randomStartPosition.coords.y,
+        randomStartPosition.coords.z - 0.9, false, false, false, false)
+    SetEntityHeading(wsb.cache.ped, randomStartPosition.coords.w)
+    Wait(500)
+    DoScreenFadeIn(500)
+    TriggerEvent('wasabi_police:changeOutfit', Config.Jail.jailOutfit)
+    inPrison(time)
+end)
+
+RegisterNetEvent('wasabi_police:releaseFromJail', function()
+    DoScreenFadeOut(500)
+    while not IsScreenFadedOut() do
+        Wait(10)
+    end
+    InJail = false
+    JailTime = 0
+    SetEntityCoords(wsb.cache.ped, Config.Jail.BuiltInPrison.release.x, Config.Jail.BuiltInPrison.release.y,
+        Config.Jail.BuiltInPrison.release.z - 0.9, false, false, false, false)
+    SetEntityHeading(wsb.cache.ped, Config.Jail.BuiltInPrison.release.w)
+    TriggerEvent('wasabi_police:changeOutfit', 'civ_wear')
+    DoScreenFadeIn(500)
+    Wait(500)
+end)
 if wsb.framework == 'qb' then -- QBCore Compatibility
     local checkIfDead = function(id)
         local isDead = wsb.awaitServerCallback('wasabi_police:isPlayerDead', id)

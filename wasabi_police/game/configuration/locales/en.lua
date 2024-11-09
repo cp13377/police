@@ -5,6 +5,12 @@ if not Config.Language then Config.Language = 'en' end
 if Config.Language ~= 'en' then return end
 
 Strings = {
+
+    jail_countdown_header = 'YOU ARE IN JAIL',
+    jail_countdown_sentence = '%s Months Left',
+    jail_time_up = 'Jail Time Up',
+    jail_time_up_desc = 'You served your time in jail.',
+
     no_society_account = '^0[^WARNING^0] No society account found for %s - check your configuration!',
     officer = 'Officer',
     not_authorized = 'Not Authorized',
@@ -42,6 +48,39 @@ Strings = {
     menu_radar_posts = 'Radar Posts',
     menu_radar_posts_desc = 'Deploy/Remove radar posts.',
     warning_speedtrap_table = '^0[^1WARNING^0] Speed trap database table did not auto-build!',
+
+    menu_cctv_cameras = 'CCTV Cameras',
+    menu_cctv_cameras_desc = 'Deploy/Remove CCTV Cameras',
+    menu_cctv_create = 'Create CCTV Camera',
+    menu_cctv_create_desc = 'Create a CCTV Camera near your current location',
+    menu_select_cctv = 'Select CCTV Camera',
+    menu_cctv_manage = 'Manage CCTV Camera',
+    menu_cctv_manage_desc = 'Manage the closest CCTV Camera',
+    new_cctv = 'New CCTV Camera',
+    manage_cctv_rename = 'Rename CCTV Camera',
+    manage_cctv_rename_desc = 'Edit the name of this CCTV Camera',
+    cctv_renamed = 'You have successfully renamed %s to %s.',
+    cctv_rename_failed = 'You have failed to rename CCTV Camera!',
+    manage_cctv_delete = 'Remove CCTV Camera',
+    manage_cctv_delete_desc = 'Remove this CCTV Camera',
+    manage_cctv_view = 'View CCTV Camera',
+    manage_cctv_view_desc = 'View the current CCTV Camera',
+    cctv = 'CCTV Camera',
+    cctv_placed = 'CCTV Camera has successfully been placed.',
+    cctv_failed = 'Failed to place CCTV Camera.',
+    manage_cctv_repair = 'Repair CCTV Camera',
+    manage_cctv_repair_desc = 'Repair this CCTV Camera',
+    cctv_repaired = 'CCTV Camera has been repaired.',
+    cctv_repair_failed = 'Failed to repair CCTV Camera.',
+    warning_cctv_table = '^0[^1WARNING^0] CCTV database table did not auto-build!',
+    cctv_repairing = 'Repairing CCTV Camera. . .',
+    cctv_not_broken = 'CCTV Camera Not Broken',
+    cctv_destroyed = 'CCTV Camera Destroyed',
+    cctv_destroyed_desc = 'You have destroyed the CCTV Camera',
+    cctv_not_closest = 'Not Closest CCTV Camera',
+    cctv_remove_error = 'Error',
+    cctv_remove_error_desc = "You cann't remove this CCTV Camera",
+
 
     license_self = 'Self',
     grade_too_low = 'Grade too Low',

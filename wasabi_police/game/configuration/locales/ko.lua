@@ -5,6 +5,12 @@ if not Config.Language then Config.Language = 'ko' end
 if Config.Language ~= 'ko' then return end
 
 Strings = {
+
+    jail_countdown_header = '당신은 감옥에 있습니다',
+    jail_countdown_sentence = '%s 개월 남음',
+    jail_time_up = '복역 기간 종료',
+    jail_time_up_desc = '감옥에서의 기간을 모두 복역했습니다.',
+
     no_society_account = '%s의 사회 계좌를 찾을 수 없습니다 - 설정을 확인하세요!',
     officer = '경찰관',
     not_authorized = '권한 없음',

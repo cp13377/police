@@ -5,6 +5,12 @@ if not Config.Language then Config.Language = 'cn' end
 if Config.Language ~= 'cn' then return end
 
 Strings = {
+
+    jail_countdown_header = '你在监狱中',
+    jail_countdown_sentence = '%s 个月剩余',
+    jail_time_up = '刑期已满',
+    jail_time_up_desc = '你已服满刑期。',
+
     no_society_account = '未找到社会账户，请检查您的配置！',
     officer = '警官',
     not_authorized = '未授权',
