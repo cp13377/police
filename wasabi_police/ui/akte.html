@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realistische Akte</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #e6e6e6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .akte-container {
+            width: 800px;
+            background-color: #f2f2f2; /* Gräulicher Hintergrund */
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        /* Papier-Effekt */
+        .akte-container::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 100%;
+            height: 100%;
+            background-color: #f2f2f2;
+            z-index: -1;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transform: rotate(-2deg);
+        }
+
+        .akte-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .akte-header h1 {
+            font-size: 28px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin: 0;
+            color: #333;
+        }
+
+        .akte-header p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        /* Bild oben rechts */
+        .akte-header img {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 120px;
+            height: 160px;
+            border: 1px solid #ccc;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .akte-section {
+            margin-bottom: 25px;
+        }
+
+        .akte-section h2 {
+            font-size: 20px;
+            color: #333;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        .akte-section p {
+            margin: 10px 0;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .akte-section p strong {
+            color: #000;
+        }
+
+        /* Einträge der Strafen */
+        .fine-entry {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            background-color: #f7f7f7;
+            position: relative;
+        }
+
+        .fine-entry::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: -20px;
+            width: 10px;
+            height: calc(100% - 20px);
+            background-color: #ff6666;
+        }
+
+        .fine-entry h3 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .fine-entry p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="akte-container">
+        <div class="akte-header">
+            <h1>Strafakte</h1>
+            <p>Fallakte für: <strong>Max Mustermann</strong></p>
+            <p>Datum der Erstellung: 06.10.2023</p>
+            <!-- Bild oben rechts -->
+            <img src="https://via.placeholder.com/120x160.png" alt="Spielerfoto">
+        </div>
+
+        <div class="akte-section">
+            <h2>Persönliche Informationen</h2>
+            <p><strong>Name:</strong> Max Mustermann</p>
+            <p><strong>Geburtsdatum:</strong> 01.01.1990</p>
+            <p><strong>Beruf:</strong> Mechaniker</p>
+        </div>
+
+        <div class="akte-section">
+            <h2>Strafregister</h2>
+
+            <!-- Dynamische Einträge für Strafen -->
+            <div class="fine-entry">
+                <h3>Raserei</h3>
+                <p><strong>Betrag:</strong> $500</p>
+                <p><strong>Datum:</strong> 05.10.2023</p>
+                <p><strong>Status:</strong> Nicht bezahlt</p>
+            </div>
+
+            <div class="fine-entry">
+                <h3>Fahren unter Alkoholeinfluss</h3>
+                <p><strong>Betrag:</strong> $1000</p>
+                <p><strong>Datum:</strong> 02.10.2023</p>
+                <p><strong>Status:</strong> Bezahlt</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Diese Akte ist vertraulich und darf nur von berechtigten Personen eingesehen werden.</p>
+        </div>
+    </div>
+    <script>
+        // JavaScript in akte.html
+    
+        window.addEventListener('message', function(event) {
+            let data = event.data;
+            console.log("Empfange Message in der html")
+    
+            // Verarbeite die Nachricht und zeige die Akte mit den Fines an
+            if (data.type === "setPlayerFines") {
+                setPlayerFines(JSON.parse(data.fines), data.playerName);
+            }
+        });
+    
+        function setPlayerFines(fines, playerName) {
+            // Setze den Spielernamen in der Akte
+            document.querySelector('.akte-header h1').textContent = "Strafakte: " + playerName;
+    
+            // Container für Strafregister
+            const strafregisterSection = document.querySelector('.akte-section:last-child');
+            strafregisterSection.innerHTML = ''; // Lösche alte Inhalte
+    
+            fines.forEach(fine => {
+                // Erstelle neuen Eintrag für jede Strafe
+                const fineEntry = document.createElement('div');
+                fineEntry.className = 'fine-entry';
+                fineEntry.innerHTML = `
+                    <h3>${fine.description}</h3>
+                    <p><strong>Betrag:</strong> $${fine.fine_amount}</p>
+                    <p><strong>Datum:</strong> ${fine.fine_date}</p>
+                    <p><strong>Status:</strong> ${fine.paid ? "Bezahlt" : "Nicht bezahlt"}</p>
+                `;
+                strafregisterSection.appendChild(fineEntry);
+            });
+        }
+    </script>
+    
+</body>
+</html>
